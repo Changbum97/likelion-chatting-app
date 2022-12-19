@@ -1,5 +1,6 @@
 package com.likelion.chatting_app;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,10 @@ import java.util.stream.IntStream;
 @Controller
 @Slf4j
 @RequestMapping("/chat")
+@RequiredArgsConstructor
 public class ChatController {
+
+    private final SseEmitters sseEmitters;
 
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
@@ -32,6 +36,7 @@ public class ChatController {
         ChatMessage message = new ChatMessage(req.authorName(), req.content());
 
         chatMessages.add(message);
+        sseEmitters.noti("chat__messageAdded");
 
         return new RsData<>(
                 "S-1",
